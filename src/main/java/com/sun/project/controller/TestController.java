@@ -25,8 +25,6 @@ public class TestController {
 	@RequestMapping("/hello")
 	@ResponseBody
 	public String hello() {
-		QmTs qmTs=	qmTsMapper.selectByPrimaryKey(1L);
-		
 		return "ok";
 	}
 	

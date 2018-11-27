@@ -18,7 +18,7 @@
 	<!-- 加载spring配置文件 -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:applicationContext.xml</param-value>
+		<param-value>classpath:spring-applicationContext.xml</param-value>
 	</context-param>
 	
 	<!-- Spring MVC servlet -->
@@ -42,7 +42,7 @@
 	<!-- 2.替换404页面 start -->
 	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/views/404.html</location>
+		<location>/WEB-INF/htmls/404.html</location>
 	</error-page>
 
 

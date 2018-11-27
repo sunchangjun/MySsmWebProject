@@ -42,7 +42,7 @@
 	<!-- 2.替换404页面 start -->
 	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/views/404.html</location>
+		<location>/WEB-INF/htmls/404.html</location>
 	</error-page>
 
 
