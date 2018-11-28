@@ -22,7 +22,6 @@
 	<!-- 	<context:exclude-filter type="annotation" expression="com.sun.project.controller" />  -->
 	</context:component-scan>
 
-
 	<!--加载  properties文件-->
 	<context:property-placeholder location="classpath:jdbc.properties" />
 	<!-- 配置Druid数据源 -->
