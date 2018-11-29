@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rdb="http://www.dangdang.com/schema/ddframe/rdb"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.dangdang.com/schema/ddframe/rdb
+                        http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd">
+
+    <!--数据库sharding策略：以id列进行sharding，sharding逻辑在AuthUserDatabaseShardingAlgorithm中-->
+    <rdb:strategy id="databaseStrategy" sharding-columns="id"
+                  algorithm-class="com.crt.fin.ospsso.service.shardingjdbc.AuthUserDatabaseShardingAlgorithm" />
+    <!--auth_user表sharding策略:无 -->
+
+    <!--定义sharding数据源-->
+    <rdb:data-source id="shardingDataSource">
+        <!--default-data-source指定默认数据源, 即没有在<rdb:table-rules>申明的logic-table表,
+        即不需要分库分表的表, 全部走默认数据源-->
+        <rdb:sharding-rule data-sources="sj_ds_0,sj_ds_1,sj_ds_2,sj_ds_3,sj_ds_default"
+                           default-data-source="sj_ds_default">
+            <rdb:table-rules>
+                <!--auth_user只分库不分表, actual-tables的值一定要加上:sj_ds_${0..3}.,
+                否则会遍历data-sources, 而sj_ds_default中并没有auth_user表 -->
+                <rdb:table-rule logic-table="auth_user" actual-tables="sj_ds_${0..3}.auth_user"
+                                database-strategy="databaseStrategy"/>
+            </rdb:table-rules>
+            <rdb:default-database-strategy sharding-columns="none" algorithm-class="com.dangdang.ddframe.rdb.sharding.api.strategy.database.NoneDatabaseShardingAlgorithm"/>
+            <rdb:default-table-strategy sharding-columns="none" algorithm-class="com.dangdang.ddframe.rdb.sharding.api.strategy.table.NoneTableShardingAlgorithm"/>
+        </rdb:sharding-rule>
+        <rdb:props>
+            <prop key="sql.show">true</prop>
+            <prop key="executor.size">2</prop>
+        </rdb:props>
+    </rdb:data-source>
+
+    <!-- 配置sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!---datasource交给sharding-jdbc托管-->
+        <property name="dataSource" ref="shardingDataSource"/>
+        <property name="mapperLocations" value="classpath*:mybatis/*Mapper.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.crt.fin.ospsso.dal.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+</beans>

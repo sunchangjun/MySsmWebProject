@@ -3,6 +3,8 @@
  */
 package com.sun.project.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +21,21 @@ import com.sun.project.entity.QmTs;
 @Controller
 @RequestMapping("/test")
 public class TestController {
+	private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 	@Autowired
 	QmTsMapper qmTsMapper;
 	
 	@RequestMapping("/hello")
 	@ResponseBody
 	public String hello() {
+		logger.info("执行hello()");
 		return "ok";
 	}
 	
 	@RequestMapping("/select")
 	@ResponseBody
 	public Object select() {
+		logger.info("执行select()");
 	QmTs qmTs=	qmTsMapper.selectByPrimaryKey(1L);
 	System.out.println(JSONObject.toJSONString(qmTs));
 		
